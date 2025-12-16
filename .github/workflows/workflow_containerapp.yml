@@ -43,3 +43,13 @@ jobs:
         az acr login --name microhackregistrystacs01 --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }} && 
         docker build -t microhackregistrystacs01.azurecr.io/microhackapp:1 -f Dockerfile . && 
         docker push microhackregistrystacs01.azurecr.io/microhackapp:1
+    - name: Deploy to Container App
+      uses: azure/container-apps-deploy-action@v2
+      with:
+        imageToDeploy: microhackregistrystacs01.azurecr.io/microhackapp:${{ steps.get_tag.outputs.image_tag }}
+        acrUsername: ${{ secrets.ACR_USERNAME }}
+        acrPassword: ${{ secrets.ACR_PASSWORD }}
+        resourceGroup: stacs01RG
+        containerAppEnvironment: microhack-containerappenv-stacs01
+        containerAppName: microhack-containerapp-stacs01
+        targetPort: 8080
